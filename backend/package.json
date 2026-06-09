@@ -1,0 +1,75 @@
+{
+  "name": "photobooth-backend",
+  "version": "1.0.0",
+  "description": "Wedding Photobooth MVP API",
+  "scripts": {
+    "build": "nest build",
+    "start": "nest start",
+    "start:dev": "nest start --watch",
+    "start:prod": "node dist/main",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/data-source.ts",
+    "migration:run": "typeorm-ts-node-commonjs migration:run -d src/data-source.ts",
+    "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/data-source.ts",
+    "migration:show": "typeorm-ts-node-commonjs migration:show -d src/data-source.ts"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.679.0",
+    "@aws-sdk/s3-request-presigner": "^3.679.0",
+    "@nestjs/bullmq": "^11.0.4",
+    "@nestjs/common": "^10.4.6",
+    "@nestjs/config": "^3.3.0",
+    "@nestjs/core": "^10.4.6",
+    "@nestjs/platform-express": "^10.4.6",
+    "@nestjs/schedule": "^6.1.3",
+    "@nestjs/throttler": "^6.2.1",
+    "@nestjs/typeorm": "^10.0.2",
+    "@sentry/node": "^8.38.0",
+    "bullmq": "^5.78.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
+    "dotenv": "^16.4.5",
+    "helmet": "^8.0.0",
+    "pg": "^8.13.1",
+    "posthog-node": "^5.36.4",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1",
+    "sharp": "^0.34.5",
+    "twilio": "^5.3.5",
+    "typeorm": "^0.3.20",
+    "uuid": "^11.0.3"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^10.4.7",
+    "@nestjs/testing": "^10.4.6",
+    "@types/express": "^5.0.0",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.9.0",
+    "@types/supertest": "^6.0.2",
+    "@types/uuid": "^10.0.0",
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "typeorm-ts-node-commonjs": "^0.3.20",
+    "typescript": "^5.6.3"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
+  }
+}

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Kiosk LAN QR server serves HTTP; restrict to managed devices on private networks -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>

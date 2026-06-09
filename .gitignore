@@ -1,0 +1,15 @@
+*.iml
+.gradle/
+/local.properties
+/.idea/
+.DS_Store
+/build/
+/captures/
+*.apk
+*.jks
+node_modules/
+dist/
+.next/
+.env
+.env.local
+*.log

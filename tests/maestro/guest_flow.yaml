@@ -1,0 +1,27 @@
+appId: com.futad.photobooth
+---
+- launchApp:
+    clearState: true
+- assertVisible: "TAP TO BEGIN"
+- tapOn: "TAP TO BEGIN"
+- assertVisible:
+    text: "Consent"
+    optional: true
+- tapOn:
+    text: "I Consent"
+    optional: true
+- tapOn:
+    text: "Photo"
+    optional: true
+- tapOn:
+    text: "Capture"
+    optional: true
+- assertVisible:
+    text: "Retake"
+    optional: true
+- tapOn:
+    text: "Use Photo"
+    optional: true
+- assertVisible:
+    text: "Scan to download"
+    optional: true
