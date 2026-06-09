@@ -1,11 +1,10 @@
+﻿import React from 'react';
 import { cn } from '@/lib/utils';
 
-export function Input({
-  className,
-  ...props
-}: React.InputHTMLAttributes<HTMLInputElement>) {
-  return (
+export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
+  ({ className, ...props }, ref) => (
     <input
+      ref={ref}
       className={cn(
         'w-full bg-surface border border-border rounded-xl px-4 py-2.5 text-sm font-sans',
         'text-text-primary placeholder:text-text-subtle',
@@ -14,15 +13,14 @@ export function Input({
       )}
       {...props}
     />
-  );
-}
+  )
+);
+Input.displayName = 'Input';
 
-export function Textarea({
-  className,
-  ...props
-}: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  return (
+export const Textarea = React.forwardRef<HTMLTextAreaElement, React.TextareaHTMLAttributes<HTMLTextAreaElement>>(
+  ({ className, ...props }, ref) => (
     <textarea
+      ref={ref}
       className={cn(
         'w-full bg-surface border border-border rounded-xl px-4 py-2.5 text-sm font-sans',
         'text-text-primary placeholder:text-text-subtle resize-y min-h-[100px]',
@@ -31,16 +29,14 @@ export function Textarea({
       )}
       {...props}
     />
-  );
-}
+  )
+);
+Textarea.displayName = 'Textarea';
 
-export function Select({
-  className,
-  children,
-  ...props
-}: React.SelectHTMLAttributes<HTMLSelectElement>) {
-  return (
+export const Select = React.forwardRef<HTMLSelectElement, React.SelectHTMLAttributes<HTMLSelectElement>>(
+  ({ className, children, ...props }, ref) => (
     <select
+      ref={ref}
       className={cn(
         'w-full bg-surface border border-border rounded-xl px-4 py-2.5 text-sm font-sans',
         'text-text-primary focus:outline-none focus:border-gold/50 focus:shadow-glow transition-all',
@@ -50,5 +46,6 @@ export function Select({
     >
       {children}
     </select>
-  );
-}
+  )
+);
+Select.displayName = 'Select';

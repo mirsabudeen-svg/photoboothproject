@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -72,13 +72,12 @@ export default function NewEventPage() {
         name: data.name,
         eventType: 'WEDDING',
         config: {
-          themeId: data.theme,
+          theme: data.theme,
           captureMode: data.captureMode,
           consentText: data.consentText,
           hashtag: data.hashtag,
           shareChannels: data.shareChannels,
           retentionDays: data.retentionDays,
-          templateId: '4x6_postcard',
         },
       }),
     });
@@ -102,7 +101,7 @@ export default function NewEventPage() {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <FormField label="Event Name" error={errors.name?.message}>
-          <Input data-testid="event-name" {...register('name')} placeholder="Summer Wedding — Sarah & James" />
+          <Input data-testid="event-name" {...register('name')} placeholder="Summer Wedding â€” Sarah & James" />
           {errors.name && <span data-testid="error-name" className="sr-only">{errors.name.message}</span>}
         </FormField>
 
@@ -192,3 +191,4 @@ export default function NewEventPage() {
     </div>
   );
 }
+
