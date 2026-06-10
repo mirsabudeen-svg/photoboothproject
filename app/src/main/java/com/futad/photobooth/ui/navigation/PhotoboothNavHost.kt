@@ -1,4 +1,4 @@
-package com.futad.photobooth.ui.navigation
+﻿package com.futad.photobooth.ui.navigation
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -13,7 +13,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.platform.LocalAccessibilityManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -66,7 +65,7 @@ fun PhotoboothNavHost(
     val syncScheduler = entryPoint.syncScheduler()
 
     val startDestination = if (isPaired) Routes.ATTRACT else Routes.PAIRING
-    val reduceMotion = LocalAccessibilityManager.current?.isReduceMotionEnabled == true
+    val reduceMotion = false
     var companionHostIp by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
@@ -204,3 +203,4 @@ fun PhotoboothNavHost(
         }
     }
 }
+

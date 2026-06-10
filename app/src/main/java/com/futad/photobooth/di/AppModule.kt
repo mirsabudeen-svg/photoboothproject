@@ -1,4 +1,4 @@
-package com.futad.photobooth.di
+﻿package com.futad.photobooth.di
 
 import android.content.Context
 import androidx.room.Room
@@ -112,8 +112,5 @@ abstract class RepositoryModule {
     @Binds @Singleton abstract fun bindCamera(impl: CameraXController): CameraController
 }
 
-@Module
-@InstallIn(SingletonComponent::class)
-object HardwareModule {
-    @Provides @Singleton fun provideEscPosPrinter(impl: EscPosPrinter): EscPosPrinter = impl
-}
+
+

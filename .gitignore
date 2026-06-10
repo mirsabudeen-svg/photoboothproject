@@ -13,3 +13,9 @@ dist/
 .env
 .env.local
 *.log
+
+app/build/
+core/*/build/
+feature/*/build/
+hardware/*/build/
+kiosk/build/

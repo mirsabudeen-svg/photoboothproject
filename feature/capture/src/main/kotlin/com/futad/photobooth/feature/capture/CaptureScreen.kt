@@ -1,4 +1,4 @@
-package com.futad.photobooth.feature.capture
+﻿package com.futad.photobooth.feature.capture
 
 import android.graphics.BitmapFactory
 import androidx.camera.view.PreviewView
@@ -46,7 +46,7 @@ fun CaptureScreen(
         AndroidView(
             factory = { ctx ->
                 PreviewView(ctx).also { preview ->
-                    viewModel.getCameraController()?.setPreviewView(preview)
+                    preview.controller = viewModel.getCameraController()
                 }
             },
             modifier = Modifier.fillMaxSize(),
@@ -105,3 +105,4 @@ private fun PreviewActions(onRetake: () -> Unit, onConfirm: () -> Unit) {
         BigButton(text = "Use Photo", onClick = onConfirm)
     }
 }
+

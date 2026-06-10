@@ -1,13 +1,10 @@
-package com.futad.photobooth.feature.admin
+﻿package com.futad.photobooth.feature.admin
 
 import android.content.Context
 import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
 import dagger.hilt.android.qualifiers.ApplicationContext
-import java.io.File
-import java.io.PrintWriter
-import java.io.StringWriter
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -43,3 +40,4 @@ class SessionWatchdog @Inject constructor() {
     fun isStalled(timeoutMs: Long = 120_000): Boolean =
         System.currentTimeMillis() - lastProgressMs > timeoutMs
 }
+

@@ -1,4 +1,4 @@
-package com.futad.photobooth.kiosk
+﻿package com.futad.photobooth.kiosk
 
 import android.app.Activity
 import android.app.admin.DevicePolicyManager
@@ -47,7 +47,8 @@ class KioskModeManager @Inject constructor(
     }
 
     fun exitLockTask(activity: Activity) {
-        if (activity.isInLockTaskMode) {
+        val am = activity.getSystemService(android.app.ActivityManager::class.java)
+        if (am?.isInLockTaskMode == true) {
             activity.stopLockTask()
         }
     }
@@ -55,3 +56,4 @@ class KioskModeManager @Inject constructor(
     fun adminComponent(): ComponentName =
         ComponentName(context, KioskDeviceAdminReceiver::class.java)
 }
+
