@@ -1,4 +1,6 @@
-import { IsEnum, IsInt, IsOptional, IsString, IsUUID, Max, Min } from 'class-validator';
+import { IsEnum, IsIn, IsInt, IsOptional, IsString, IsUUID, Max, Min } from 'class-validator';
+
+const ALLOWED_CONTENT_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'] as const;
 
 const CAPTURE_TYPES = [
   'photo',
@@ -28,7 +30,7 @@ export class CreateCaptureDto {
   deviceId: string;
 
   @IsOptional()
-  @IsString()
+  @IsIn(ALLOWED_CONTENT_TYPES)
   contentType?: string;
 
   @IsOptional()

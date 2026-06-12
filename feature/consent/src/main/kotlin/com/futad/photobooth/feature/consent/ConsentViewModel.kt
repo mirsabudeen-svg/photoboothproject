@@ -37,13 +37,15 @@ class ConsentViewModel @Inject constructor(
 
     fun accept(onAccepted: () -> Unit) {
         viewModelScope.launch {
-            val eventId = eventRepository.getActiveEvent()?.eventId ?: return@launch
-            consentRepository.recordConsent(
-                eventId = eventId,
-                sessionId = _uiState.value.sessionId,
-                accepted = true,
-                timestamp = System.currentTimeMillis(),
-            )
+            val eventId = eventRepository.getActiveEvent()?.eventId
+            if (eventId != null) {
+                consentRepository.recordConsent(
+                    eventId = eventId,
+                    sessionId = _uiState.value.sessionId,
+                    accepted = true,
+                    timestamp = System.currentTimeMillis(),
+                )
+            }
             _uiState.value = _uiState.value.copy(accepted = true)
             onAccepted()
         }

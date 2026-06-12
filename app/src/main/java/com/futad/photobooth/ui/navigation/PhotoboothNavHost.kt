@@ -72,6 +72,12 @@ fun PhotoboothNavHost(
         companionHostIp = credentialsStore.getCompanionHostIp().orEmpty()
     }
 
+    LaunchedEffect(isPaired, activeEvent?.eventId) {
+        if (isPaired && activeEvent == null) {
+            mainViewModel.ensureActiveEvent()
+        }
+    }
+
     NavHost(
         navController = navController,
         startDestination = startDestination,
@@ -104,9 +110,14 @@ fun PhotoboothNavHost(
         composable(Routes.CONSENT) {
             val consentViewModel: ConsentViewModel = hiltViewModel()
             val consentState by consentViewModel.uiState.collectAsStateWithLifecycle()
+            LaunchedEffect(Unit) {
+                mainViewModel.ensureActiveEvent()
+            }
             ConsentScreen(
                 consentText = consentState.consentText.ifBlank {
                     activeEvent?.config?.consentText.orEmpty()
+                }.ifBlank {
+                    "I consent to having my photo taken at this event and understand images may be shared with other guests."
                 },
                 onAccept = { consentViewModel.accept { navController.navigate(Routes.CAPTURE) } },
                 onDecline = { navController.popBackStack() },
@@ -126,20 +137,13 @@ fun PhotoboothNavHost(
         }
         composable(Routes.SHARE) {
             val captureId = currentCaptureId ?: "local"
-            var smsPhone by remember { mutableStateOf("") }
             val qrUrl = qrGenerator.localUrl(
                 port = com.futad.photobooth.feature.sharing.LocalMediaServer.DEFAULT_PORT,
                 captureId = captureId,
             )
             ShareScreen(
+                captureId = captureId,
                 qrContent = qrUrl,
-                smsPhone = smsPhone,
-                onSmsPhoneChange = { smsPhone = it },
-                onSmsShare = {
-                    scope.launch {
-                        mainViewModel.enqueueSmsShare(captureId, smsPhone.trim().ifBlank { null })
-                    }
-                },
                 onWhatsAppShare = {
                     currentMediaPath?.let { mainViewModel.shareWhatsApp(File(it)) }
                 },

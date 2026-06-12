@@ -11,6 +11,7 @@ import com.futad.photobooth.core.domain.repository.EventRepository
 import com.futad.photobooth.core.domain.repository.PrintRepository
 import com.futad.photobooth.core.domain.usecase.EnqueueShareUseCase
 import com.futad.photobooth.core.domain.usecase.SaveCaptureUseCase
+import com.futad.photobooth.feature.admin.demoWeddingEvent
 import com.futad.photobooth.feature.ai.FilterPreset
 import com.futad.photobooth.feature.ai.FilterProcessor
 import com.futad.photobooth.feature.capture.CaptureResult
@@ -63,6 +64,12 @@ class MainViewModel @Inject constructor(
     suspend fun saveEvent(event: Event) {
         eventRepository.saveEvent(event)
         eventRepository.setActiveEvent(event.eventId)
+    }
+
+    /** Ensures guest flow works after pairing when no event was synced from the backend yet. */
+    suspend fun ensureActiveEvent() {
+        if (eventRepository.getActiveEvent() != null) return
+        saveEvent(demoWeddingEvent())
     }
 
     suspend fun processCapture(result: CaptureResult): String {

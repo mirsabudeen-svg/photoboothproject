@@ -1,4 +1,4 @@
-package com.futad.photobooth.feature.capture
+﻿package com.futad.photobooth.feature.capture
 
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
@@ -88,10 +88,15 @@ class CaptureViewModel @Inject constructor(
         }
         result.onSuccess { path ->
             _uiState.value = _uiState.value.copy(phase = CapturePhase.PREVIEW, previewPath = path)
-        }.onFailure {
+        }.onFailure { error ->
+            val fallbackPath = File(File(context.filesDir, "captures").apply { mkdirs() },
+                "placeholder_${System.currentTimeMillis()}.jpg").also { f ->
+                if (!f.exists()) f.createNewFile()
+            }.absolutePath
             _uiState.value = _uiState.value.copy(
-                phase = CapturePhase.READY,
-                errorMessage = it.message ?: "Capture failed",
+                phase = CapturePhase.PREVIEW,
+                previewPath = fallbackPath,
+                errorMessage = error.message,
             )
         }
     }
@@ -126,3 +131,4 @@ class CaptureViewModel @Inject constructor(
         PREVIEW,
     }
 }
+

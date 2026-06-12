@@ -13,6 +13,7 @@ import { DevicesModule } from './devices/devices.module';
 import { EventsModule } from './events/events.module';
 import { GalleryModule } from './gallery/gallery.module';
 import { HealthController } from './health.controller';
+import { AdminApiKeyGuard } from './common/admin-api-key.guard';
 import { RetentionModule } from './retention/retention.module';
 import { SharingModule } from './sharing/sharing.module';
 import { SmsModule } from './sms/sms.module';
@@ -60,6 +61,7 @@ import { StorageModule } from './storage/storage.module';
   ],
   controllers: [HealthController],
   providers: [
+    AdminApiKeyGuard,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

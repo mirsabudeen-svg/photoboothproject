@@ -10,7 +10,7 @@ import com.futad.photobooth.core.domain.repository.CaptureRepository
 import com.futad.photobooth.core.network.PhotoboothApi
 import com.futad.photobooth.core.network.dto.CompleteCaptureRequest
 import com.futad.photobooth.core.network.dto.CreateCaptureRequest
-import com.futad.photobooth.feature.sync.storage.DeviceCredentialsStore
+import com.futad.photobooth.core.data.store.DeviceCredentialsStore
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import okhttp3.MediaType.Companion.toMediaType
@@ -31,8 +31,9 @@ class UploadWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        val creds = credentialsStore.get() ?: return Result.retry()
-        val auth = "Bearer ${creds.accessToken}"
+        val token = credentialsStore.getToken() ?: return Result.retry()
+        val deviceId = credentialsStore.getDeviceId() ?: return Result.retry()
+        val auth = "Bearer $token"
         val queued = captureRepository.getQueuedCaptures()
         for (capture in queued) {
             captureRepository.updateSyncStatus(capture.captureId, SyncStatus.UPLOADING)
@@ -42,7 +43,7 @@ class UploadWorker @AssistedInject constructor(
                     eventId = capture.eventId,
                     captureType = capture.captureType.name,
                     idempotencyKey = capture.idempotencyKey,
-                    deviceId = creds.deviceId,
+                    deviceId = deviceId,
                 ),
             )
             val file = File(capture.compositePath ?: capture.localMediaPath)
@@ -87,8 +88,8 @@ class ShareSyncWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        val creds = credentialsStore.get() ?: return Result.retry()
-        val auth = "Bearer ${creds.accessToken}"
+        val token = credentialsStore.getToken() ?: return Result.retry()
+        val auth = "Bearer $token"
         val pending = shareRepository.getPendingShares()
         for (share in pending) {
             if (share.channel != com.futad.photobooth.core.domain.model.ShareChannel.SMS) continue

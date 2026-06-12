@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import { getSupabasePublishableKey, getSupabaseUrl } from '@/lib/supabase-env';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -16,8 +17,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const supabaseUrl = getSupabaseUrl();
+  const supabaseKey = getSupabasePublishableKey();
 
   if (!supabaseUrl || !supabaseKey) {
     if (isAssistantApi && process.env.NODE_ENV === 'production') {

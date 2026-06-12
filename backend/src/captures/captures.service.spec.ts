@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { CaptureEntity } from './capture.entity';
@@ -66,6 +66,8 @@ describe('CapturesService', () => {
       idempotencyKey: 'key-1',
       expectedMime: 'image/jpeg',
       objectKey: 'obj.jpg',
+      deviceId: 'dev-1',
+      status: 'PENDING',
     });
     storage.getRange.mockResolvedValue(Buffer.from('%PDF-1.4'));
 
@@ -81,6 +83,8 @@ describe('CapturesService', () => {
       idempotencyKey: 'key-1',
       expectedMime: 'image/jpeg',
       objectKey: 'obj.jpg',
+      deviceId: 'dev-1',
+      status: 'PENDING',
     });
     storage.getRange.mockResolvedValue(Buffer.from([0xff, 0xd8, 0xff, 0xe0]));
 
@@ -89,5 +93,41 @@ describe('CapturesService', () => {
       objectKey: 'obj.jpg',
     });
     expect(result.status).toBe('SYNCED');
+  });
+
+  it('rejects completion with a foreign objectKey', async () => {
+    capturesRepo.findOne.mockResolvedValue({
+      id: 'cap-1',
+      idempotencyKey: 'key-1',
+      expectedMime: 'image/jpeg',
+      objectKey: 'obj.jpg',
+      deviceId: 'dev-1',
+      status: 'PENDING',
+    });
+
+    await expect(
+      service.complete('Bearer tok', 'cap-1', {
+        idempotencyKey: 'key-1',
+        objectKey: 'events/other/evil.jpg',
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('rejects completion by a different device', async () => {
+    capturesRepo.findOne.mockResolvedValue({
+      id: 'cap-1',
+      idempotencyKey: 'key-1',
+      expectedMime: 'image/jpeg',
+      objectKey: 'obj.jpg',
+      deviceId: 'dev-2',
+      status: 'PENDING',
+    });
+
+    await expect(
+      service.complete('Bearer tok', 'cap-1', {
+        idempotencyKey: 'key-1',
+        objectKey: 'obj.jpg',
+      }),
+    ).rejects.toBeInstanceOf(ForbiddenException);
   });
 });

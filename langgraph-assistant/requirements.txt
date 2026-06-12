@@ -1,0 +1,2 @@
+# LangGraph from upstream Git (libs/langgraph is the installable Python package)
+langgraph @ git+https://github.com/langchain-ai/langgraph.git#subdirectory=libs/langgraph

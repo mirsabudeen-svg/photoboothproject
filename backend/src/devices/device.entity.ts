@@ -1,4 +1,5 @@
-﻿import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Index } from 'typeorm';
+
 @Entity('devices')
 export class Device {
   @PrimaryGeneratedColumn('uuid')
@@ -7,9 +8,12 @@ export class Device {
   name: string;
   @Column()
   model: string;
-  @Column({ unique: true })
-  accessToken: string;
-  @Column({ type: 'uuid', nullable: true })
+
+  @Index()
+  @Column({ name: 'access_token_hash', unique: true })
+  accessTokenHash: string;
+
+  @Column({ nullable: true })
   currentEventId: string | null;
   @Column({ type: 'timestamptz' })
   tokenIssuedAt: Date;

@@ -1,0 +1,76 @@
+# ATELIER DESIGN SYSTEM — ENFORCED RULES
+# Luxury wedding photobooth. These rules apply to EVERY UI edit. No exceptions.
+
+## IDENTITY
+The product is a private photo atelier, not a machine. Every screen is an act of
+hospitality. Copy speaks TO the guest ("Stand inside the frame"), never about the
+system ("Initializing camera").
+
+## COLOR — gold is a signal, not decoration
+- Use ONLY tokens from styles/tokens.css / tailwind theme. Never hardcode hex in components.
+- Surfaces: surface-base #0A0908, surface-raised #121110, surface-elevated #1B1916.
+- Text: content-primary #F5F0E6 (body), content-display #FAF8F3 (display), content-secondary #B8B5AD.
+- GOLD (#C6A15B) is reserved for exactly two uses: (1) the single primary action
+  on a screen, (2) the currently-active/selected state. NOTHING else may be gold.
+- champagne #E8D5A8 = active labels/accents. gold-deep #9A7B3F = decorative metadata only.
+- States: success #7BA05B, warning #D4A24E, error #B85C5C (muted, never alarming), processing #8FA3B8.
+- Borders are hairlines: 1px rgba(198,161,91,0.22).
+
+## TYPOGRAPHY — three voices
+- Display/ceremony (couple names, countdown numerals, headings): "Cormorant Garamond",
+  weight 500, italic for names. Speaks for the couple.
+- Interface (instructions, options, body): "Jost", weights 300/400/500. Speaks to the guest.
+- System metadata (captions, steps, event codes): "IBM Plex Mono", uppercase,
+  letter-spacing 0.24–0.3em. Whispers.
+- Never introduce another font. Never use bold weights above 600.
+- Kiosk minimum body size: 26px (web kiosk), never below 18px on any surface.
+
+## SHAPE & SPACE
+- border-radius: 0 EVERYWHERE. No rounded corners, ever. Softness comes from light
+  and motion, not corners. Delete any rounded-* Tailwind class you encounter.
+- Spacing: 8px base unit. Kiosk vertical rhythm: 24 / 48 / 96 / 144.
+- No drop shadows except the single capture-photo shadow (0 24px 60px rgba(0,0,0,.6)).
+- No gradients except: (a) ambient welcome-screen light drift, (b) processing shimmer.
+
+## BUTTONS — one gold per screen
+- Primary: solid gold bg, black mono uppercase label, min height 112px kiosk / 88px hit area.
+  EXACTLY ONE per screen.
+- Secondary: 1px gold hairline border, champagne label, transparent.
+- Skip/tertiary: platinum mono text only, lives at the bottom metadata layer.
+- Pressed state: scale 0.98 + brightness 0.92, 120ms.
+
+## MOTION — use lib/motion.ts constants only
+- Easings: easeLuxe (entrances), easeExit (exits), easeSettle (countdown/success).
+- Screen transitions: 450ms (outgoing fades up -16px, incoming rises +24px, 80ms overlap).
+- Touch feedback 120ms. Cinematic moments (photo develop, print exit) 700ms.
+- Never use default/linear easing. Never animate width/height/top/left — transform+opacity only.
+- ALWAYS respect prefers-reduced-motion: cross-fades only, no rings/particles.
+
+## WAITING STATES — never a spinner alone
+- Every async operation renders <ProgressNarrated/> with a human stage label
+  ("Composing your portrait…"), and keeps the guest's photo visible.
+- Print queue shows four named stages with honest time estimates.
+
+## ERRORS — guest line + staff code + fallback
+- Every error shows: plain guest copy (what happened, what's next), a mono staff
+  code in the metadata layer, and triggers its automatic fallback
+  (print fails → reorder delivery to lead with QR; network down → local QR, queue sends).
+- Errors never apologize, never blame, never say "Oops".
+
+## FLOW
+- The journey is linear S01→S12. No back buttons after capture; "Retake" is the
+  only reversal (max 2). Enhancement and Personalization always carry a quiet Skip.
+- Idle 45s → gentle "Still there?" sheet → reset to welcome.
+- Photos persist locally BEFORE any network call.
+
+## ACCESSIBILITY
+- Hit targets ≥ 88px kiosk / 72px tablet, ≥ 24px gap between targets.
+- Selection states use border + inner ring + label change, never color alone.
+- Countdown announced via aria-live. Audio cues always have visual equivalents.
+- EN/AR with full RTL mirroring (layout, motion direction).
+
+## WHEN REFACTORING EXISTING SCREENS
+1. Replace hardcoded colors/fonts with tokens. 2. Strip border-radius and shadows.
+3. Reduce to one gold primary action. 4. Move skip/back into metadata layer.
+5. Replace spinners with ProgressNarrated. 6. Apply screen transition variants.
+7. Verify hit targets and contrast. Do not change business logic while restyling.

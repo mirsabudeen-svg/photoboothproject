@@ -7,7 +7,7 @@ describeIntegration('RetentionController (integration)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
-    process.env.ADMIN_API_KEY = process.env.ADMIN_API_KEY ?? 'test-admin-key';
+    process.env.ADMIN_API_KEY = process.env.ADMIN_API_KEY ?? 'test-admin-api-key-32-chars-min!';
     app = await createTestApp();
   }, 60000);
 

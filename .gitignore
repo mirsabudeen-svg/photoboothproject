@@ -12,6 +12,7 @@ dist/
 .next/
 .env
 .env.local
+gradle.properties
 *.log
 
 app/build/

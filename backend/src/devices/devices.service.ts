@@ -1,8 +1,8 @@
 import { Injectable, OnModuleInit, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { randomBytes } from 'crypto';
 import { Repository } from 'typeorm';
+import { generateDeviceToken, hashToken } from '../common/token.util';
 import { Device } from './device.entity';
 
 const TOKEN_TTL_DAYS = 90;
@@ -34,11 +34,11 @@ export class DevicesService implements OnModuleInit {
       throw new UnauthorizedException('Invalid pairing code');
     }
     const now = new Date();
-    const accessToken = randomBytes(32).toString('hex');
+    const { raw, hash } = generateDeviceToken();
     const device = this.devices.create({
       name: dto.deviceName,
       model: dto.deviceModel,
-      accessToken,
+      accessTokenHash: hash,
       appVersion: dto.appVersion ?? null,
       osVersion: dto.osVersion ?? null,
       lastSeenAt: now,
@@ -49,7 +49,7 @@ export class DevicesService implements OnModuleInit {
     const saved = await this.devices.save(device);
     return {
       deviceId: saved.id,
-      accessToken: saved.accessToken,
+      accessToken: raw,
       expiresAt: saved.tokenExpiresAt,
     };
   }
@@ -63,22 +63,27 @@ export class DevicesService implements OnModuleInit {
       throw new UnauthorizedException('Device token expired — re-pair the device');
     }
     const now = new Date();
-    const accessToken = randomBytes(32).toString('hex');
+    const { raw, hash } = generateDeviceToken();
+    const expiresAt = new Date(now.getTime() + TOKEN_TTL_DAYS * MS_PER_DAY);
     await this.devices.update(deviceId, {
-      accessToken,
+      accessTokenHash: hash,
       tokenIssuedAt: now,
-      tokenExpiresAt: new Date(now.getTime() + TOKEN_TTL_DAYS * MS_PER_DAY),
+      tokenExpiresAt: expiresAt,
       lastSeenAt: now,
     });
     return {
-      accessToken,
-      expiresAt: new Date(now.getTime() + TOKEN_TTL_DAYS * MS_PER_DAY),
+      accessToken: raw,
+      expiresAt,
     };
   }
 
   async findByToken(token: string): Promise<Device | null> {
     const normalized = token.replace(/^Bearer\s+/i, '');
-    return this.devices.findOne({ where: { accessToken: normalized } });
+    return this.findByTokenHash(hashToken(normalized));
+  }
+
+  async findByTokenHash(hash: string): Promise<Device | null> {
+    return this.devices.findOne({ where: { accessTokenHash: hash } });
   }
 
   async touchLastSeen(deviceId: string): Promise<void> {

@@ -1,6 +1,14 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  Logger,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Device } from '../devices/device.entity';
 import { DevicesService } from '../devices/devices.service';
 import { EventEntity } from '../events/event.entity';
 import { PosthogService } from '../analytics/posthog.service';
@@ -19,6 +27,8 @@ const MAGIC_BYTES: Record<string, Buffer[]> = {
 
 @Injectable()
 export class CapturesService {
+  private readonly logger = new Logger(CapturesService.name);
+
   constructor(
     @InjectRepository(CaptureEntity) private readonly captures: Repository<CaptureEntity>,
     @InjectRepository(EventEntity) private readonly events: Repository<EventEntity>,
@@ -28,7 +38,7 @@ export class CapturesService {
     private readonly posthog: PosthogService,
   ) {}
 
-  private async assertDevice(auth: string) {
+  private async assertDevice(auth: string): Promise<Device> {
     const device = await this.devicesService.findByToken(auth ?? '');
     if (!device) throw new UnauthorizedException();
     if (device.revokedAt) throw new UnauthorizedException('Device token revoked');
@@ -87,9 +97,30 @@ export class CapturesService {
   }
 
   async complete(auth: string, captureId: string, dto: CompleteCaptureDto) {
-    await this.assertDevice(auth);
-    const capture = await this.captures.findOne({ where: { id: captureId, idempotencyKey: dto.idempotencyKey } });
-    if (!capture) return { captureId, status: 'NOT_FOUND' };
+    const device = await this.assertDevice(auth);
+    const capture = await this.captures.findOne({
+      where: { id: captureId, idempotencyKey: dto.idempotencyKey },
+    });
+    if (!capture) throw new NotFoundException('Capture not found');
+
+    if (capture.deviceId !== device.id) {
+      throw new ForbiddenException('Capture does not belong to this device');
+    }
+
+    if (dto.objectKey !== capture.objectKey) {
+      this.logger.warn(
+        `objectKey mismatch on capture ${captureId}: got "${dto.objectKey}", expected stored key`,
+      );
+      throw new BadRequestException('objectKey does not match this capture');
+    }
+
+    if (capture.status === 'SYNCED') {
+      return {
+        captureId: capture.id,
+        status: 'SYNCED',
+        galleryUrl: this.storage.publicUrl(capture.objectKey),
+      };
+    }
 
     const expectedMime = capture.expectedMime ?? 'image/jpeg';
     const head = await this.storage.getRange(dto.objectKey, 0, 15);
@@ -109,7 +140,6 @@ export class CapturesService {
     }
 
     capture.status = 'SYNCED';
-    capture.objectKey = dto.objectKey;
     await this.captures.save(capture);
     this.mediaProcessor.enqueueProcessing(capture.id);
     this.posthog.capture({

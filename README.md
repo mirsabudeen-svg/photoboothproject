@@ -12,7 +12,8 @@ wedding-photobooth/
 ├── hardware/            # camera (CameraX), printer (ESC/POS)
 ├── kiosk/               # Device Owner, Lock Task, boot receiver
 ├── backend/             # NestJS API + R2 presign
-├── admin-dashboard/     # Next.js minimal admin
+├── admin-dashboard/     # Next.js operator admin
+├── guest-kiosk/         # Next.js Atelier guest web kiosk (port 3002)
 └── docs/
 ```
 

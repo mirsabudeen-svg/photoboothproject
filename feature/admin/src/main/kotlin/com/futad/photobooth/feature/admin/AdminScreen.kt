@@ -109,6 +109,7 @@ fun demoWeddingEvent(): Event {
         themeId = "luxury_gold",
         hashtag = "#AishaAndOmar",
         templateId = "4x6_postcard",
+        consentText = "I consent to having my photo taken at this event and understand images may be shared with other guests.",
     )
     return Event(
         eventId = "demo-wedding-1",

@@ -1,0 +1,8 @@
+# Copy to gradle.properties (repo root) and set your live API hosts.
+# gradle.properties is listed in .gitignore — do not commit real URLs if you prefer secrets in CI only.
+
+# Production booths (prod flavor)
+photobooth.apiBaseUrl=https://api.yourdomain.com/api/v1
+
+# Staging tablets (staging flavor)
+photobooth.stagingApiBaseUrl=https://staging-api.yourdomain.com/api/v1

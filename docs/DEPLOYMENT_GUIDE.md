@@ -11,10 +11,14 @@ Flavors: `dev` (10.0.2.2 API), `staging`, `prod`
 
 ## Backend (Render / Fly.io)
 
-1. Provision Postgres
-2. Set env from `.env.example` (R2 credentials, Twilio optional)
-3. `npm run build && npm run start:prod`
-4. Health check: `GET /api/v1/events`
+See **`docs/BACKEND_DEPLOY.md`** for full steps (Supabase Postgres + Render Web Service + Redis + R2).
+
+Quick summary:
+1. Postgres → reuse Supabase `DATABASE_URL`
+2. Redis → Render Key Value
+3. Web Service → root `backend`, build `npm ci && npm run build`, start `npm run start:prod`
+4. Run `npm run migration:run` in Render Shell
+5. Health: `GET /api/v1/health`
 
 ## R2
 
@@ -23,11 +27,21 @@ Flavors: `dev` (10.0.2.2 API), `staging`, `prod`
 3. Set `R2_ENDPOINT`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`
 4. Optional: Cloudflare Worker for public gallery
 
-## Admin dashboard (Vercel)
+## Admin dashboard (Cloudflare Workers — recommended, free tier)
 
-1. Set `NEXT_PUBLIC_API_URL`
-2. `npm run build`
-3. Deploy to Vercel
+See `admin-dashboard/CLOUDFLARE_DEPLOY.md`.
+
+1. Set secrets in Cloudflare (`wrangler secret bulk` or Dashboard)
+2. `cd admin-dashboard && npm run deploy`
+3. Add the `*.workers.dev` or custom domain to backend `CORS_ORIGINS`
+
+## Admin dashboard (Vercel — optional)
+
+Hobby is $0 but **10s function timeout** breaks the AI assistant; Pro is ~$20/user/month for 60s+ streaming.
+
+## Android
+
+See `docs/ANDROID_DEPLOY.md` for prod API URL, signing, and kiosk provisioning.
 
 ## CI (GitHub Actions)
 

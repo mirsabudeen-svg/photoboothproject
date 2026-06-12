@@ -20,6 +20,13 @@ function validateRequiredEnv(): void {
     console.error(`Missing required env vars: ${missing.join(', ')}`);
     process.exit(1);
   }
+
+  const isProd = process.env.NODE_ENV === 'production';
+  const adminKey = process.env.ADMIN_API_KEY ?? '';
+  if (isProd && adminKey.trim().length < 32) {
+    console.error('FATAL: ADMIN_API_KEY must be set (≥32 chars) in production');
+    process.exit(1);
+  }
 }
 
 async function bootstrap() {

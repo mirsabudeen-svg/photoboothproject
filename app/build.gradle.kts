@@ -1,3 +1,10 @@
+/** Ensures BuildConfig API URL ends with a single trailing slash inside the quoted string. */
+fun quotedApiBaseUrl(propertyName: String, fallback: String): String {
+    val raw = (project.findProperty(propertyName) as String?)?.trim().orEmpty()
+    val base = (if (raw.isEmpty()) fallback else raw).removeSuffix("/")
+    return "\"$base/\""
+}
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -28,11 +35,22 @@ android {
         }
         create("staging") {
             dimension = "env"
-            buildConfigField("String", "API_BASE_URL", "\"https://staging-api.photobooth.local/api/v1/\"")
+            buildConfigField(
+                "String",
+                "API_BASE_URL",
+                quotedApiBaseUrl(
+                    "photobooth.stagingApiBaseUrl",
+                    "https://staging-api.yourdomain.com/api/v1",
+                ),
+            )
         }
         create("prod") {
             dimension = "env"
-            buildConfigField("String", "API_BASE_URL", "\"https://api.photobooth.local/api/v1/\"")
+            buildConfigField(
+                "String",
+                "API_BASE_URL",
+                quotedApiBaseUrl("photobooth.apiBaseUrl", "https://api.yourdomain.com/api/v1"),
+            )
         }
     }
 
