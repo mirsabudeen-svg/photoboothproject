@@ -3,12 +3,13 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const isAssistantApi = pathname.startsWith('/api/assistant');
 
   if (
     pathname.startsWith('/login') ||
     pathname.startsWith('/gallery') ||
     pathname.startsWith('/_next') ||
-    pathname.startsWith('/api') ||
+    (pathname.startsWith('/api') && !isAssistantApi) ||
     pathname === '/favicon.ico' ||
     pathname === '/noise.svg'
   ) {
@@ -19,6 +20,9 @@ export async function middleware(request: NextRequest) {
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseKey) {
+    if (isAssistantApi && process.env.NODE_ENV === 'production') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     return NextResponse.next();
   }
 
@@ -43,6 +47,9 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getSession();
 
   if (!session) {
+    if (isAssistantApi) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     return NextResponse.redirect(new URL('/login', request.url));
   }
 

@@ -1,4 +1,5 @@
 import { Card } from '@/components/ui/Card';
+import { AssistantActivity } from '@/components/settings/AssistantActivity';
 
 export default function SettingsPage() {
   return (
@@ -20,7 +21,14 @@ export default function SettingsPage() {
             {process.env.NEXT_PUBLIC_SUPABASE_URL ? 'Connected' : 'Not configured'}
           </p>
         </div>
+        <div>
+          <h2 className="font-sans text-sm font-medium text-text-muted">AI Assistant</h2>
+          <p className="text-text-primary font-sans mt-1">
+            {process.env.OPENAI_API_KEY ? 'OpenAI configured' : 'Not configured'}
+          </p>
+        </div>
       </Card>
+      <AssistantActivity />
     </div>
   );
 }

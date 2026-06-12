@@ -1,17 +1,25 @@
-import { Cormorant_Garamond, DM_Sans } from 'next/font/google';
+import { Cormorant_Garamond, IBM_Plex_Mono, Jost } from 'next/font/google';
 import './globals.css';
 import { AppShell } from '@/components/layout/AppShell';
 import { PostHogProvider } from '@/lib/posthog';
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
+  weight: ['400', '500'],
+  style: ['normal', 'italic'],
   variable: '--font-cormorant',
 });
 
-const dmSans = DM_Sans({
+const jost = Jost({
   subsets: ['latin'],
-  variable: '--font-dm-sans',
+  weight: ['300', '400', '500'],
+  variable: '--font-jost',
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  variable: '--font-ibm-plex-mono',
 });
 
 export const metadata = {
@@ -21,7 +29,10 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${dmSans.variable}`}>
+    <html
+      lang="en"
+      className={`${cormorant.variable} ${jost.variable} ${ibmPlexMono.variable}`}
+    >
       <body>
         <PostHogProvider>
           <AppShell>{children}</AppShell>
