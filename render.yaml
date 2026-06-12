@@ -21,7 +21,7 @@ services:
     region: singapore
     rootDir: backend
     # NODE_ENV=production skips devDeps; @nestjs/cli is required to build
-    buildCommand: NPM_CONFIG_PRODUCTION=false npm ci && npm run build
+    buildCommand: npm ci --include=dev && npm run build
     startCommand: npm run start:prod
     healthCheckPath: /api/v1/health
     envVars:
@@ -34,7 +34,7 @@ services:
       - key: CORS_ORIGINS
         value: https://photobooth-admin.mirsabudeen.workers.dev
       - key: PAIRING_CODE
-        value: WEDDING2025
+        value: PHOTOBOOTH2026
       - key: REDIS_URL
         fromService:
           name: photobooth-redis
