@@ -20,7 +20,8 @@ services:
     plan: free
     region: singapore
     rootDir: backend
-    buildCommand: npm ci && npm run build && npm run migration:run
+    # NODE_ENV=production skips devDeps; @nestjs/cli is required to build
+    buildCommand: NPM_CONFIG_PRODUCTION=false npm ci && npm run build
     startCommand: npm run start:prod
     healthCheckPath: /api/v1/health
     envVars:

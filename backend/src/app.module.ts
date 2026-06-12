@@ -35,7 +35,8 @@ import { StorageModule } from './storage/storage.module';
         autoLoadEntities: true,
         migrations: [__dirname + '/migrations/*{.ts,.js}'],
         synchronize: false,
-        migrationsRun: config.get('NODE_ENV') === 'test',
+        migrationsRun:
+          config.get('NODE_ENV') === 'test' || config.get('NODE_ENV') === 'production',
         logging: config.get('NODE_ENV') === 'development' ? ['query', 'error'] : ['error'],
         ssl: config.get('NODE_ENV') === 'production' ? { rejectUnauthorized: false } : false,
         extra: {
